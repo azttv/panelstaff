@@ -210,7 +210,7 @@
                 margin-bottom: 1.5rem;
             }
             .login-logo img {
-                width: 180px;
+                width: 90px;
                 height: 90px;
                 filter: drop-shadow(0 0 20px var(--accent-aqua-glow));
             }
@@ -1975,6 +1975,7 @@
                         alt="True Vanilla"
                         onerror="this.style.display = 'none'"
                     />
+                    <div class="login-logo-text">True Vanilla</div>
                 </div>
                 <p class="login-subtitle">
                     Panneau d'Administration — Accès restreint
@@ -3136,13 +3137,9 @@
             // ═══════════════════════════════════════════════════════
             const CONFIG = {
                 ALLOWED_IDS: ["217271015892451328", "303167270891290625"],
-                // IMPORTANT: Replace these with your real values
-                DISCORD_CLIENT_ID: "1372683898378522634",
-                DISCORD_REDIRECT_URI:
-                    window.location.origin + window.location.pathname,
-                // Plugin API base URL (the plugin runs an HTTP server)
+                DISCORD_CLIENT_ID: "1425143639125786724",
+                DISCORD_REDIRECT_URI: "https://staff.true-vanilla.fr/",
                 API_BASE: "http://staff.true-vanilla.fr/api",
-                // Discord webhooks (replace with your real webhooks)
                 WEBHOOKS: {
                     vip: "https://discord.com/api/webhooks/1436719755578052668/BmHB4Dc40iM9eD9mFc3o7dJZ12pGo9rSH-LEweteHLZII84ncSjh9Sy2M4TNsQv01627",
                     general:
