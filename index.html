@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>True Vanilla - Panel Staff</title>
+    <title>True Vanilla - Admin Panel</title>
     <link rel="icon" type="image/png" href="icons/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -105,7 +105,7 @@
         @keyframes gradient-slide { 0% { background-position: 0% 0; } 100% { background-position: 200% 0; } }
 
         .login-logo { margin-bottom: 1.5rem; }
-        .login-logo img { width: 180px; height: 90px; filter: drop-shadow(0 0 20px var(--accent-aqua-glow)); }
+        .login-logo img { width: 90px; height: 90px; filter: drop-shadow(0 0 20px var(--accent-aqua-glow)); }
         .login-logo-text {
             font-family: 'Cinzel', serif; font-size: 1.8rem; font-weight: 700;
             background: linear-gradient(135deg, var(--text-primary), var(--accent-aqua));
@@ -226,7 +226,7 @@
 
         .content-scroll {
             flex: 1; overflow-y: auto; padding: 2rem;
-            padding-bottom: 100px;
+            padding-bottom: 2rem;
         }
 
         .tab-panel { display: none; }
@@ -750,68 +750,7 @@
         }
         .cmd-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; }
 
-        /* ═══════════════════════════════════════════════════════
-           BOTTOM DOCK (ReactBits style)
-           ═══════════════════════════════════════════════════════ */
-        .dock-wrapper {
-            position: fixed; bottom: 0; left: var(--sidebar-width);
-            right: 0; display: flex; justify-content: center;
-            padding-bottom: 12px; z-index: 100; pointer-events: none;
-        }
-
-        .dock {
-            display: flex; align-items: flex-end; gap: 4px;
-            padding: 8px 10px; pointer-events: all;
-            background: rgba(17, 24, 39, 0.85);
-            backdrop-filter: blur(16px);
-            border: 1px solid var(--border-subtle);
-            border-radius: 18px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-        }
-
-        .dock-item {
-            display: flex; flex-direction: column; align-items: center;
-            gap: 4px; cursor: pointer; transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            padding: 6px; border-radius: 12px; position: relative;
-        }
-        .dock-item:hover { background: rgba(255,255,255,0.06); }
-        .dock-item.active { background: rgba(6, 182, 212, 0.12); }
-        .dock-item.active::after {
-            content: ''; position: absolute; bottom: 0px;
-            width: 5px; height: 5px; border-radius: 50%;
-            background: var(--accent-aqua);
-        }
-
-        .dock-icon {
-            width: 44px; height: 44px; border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            transform-origin: bottom center;
-        }
-        .dock-icon.minijeu { background: linear-gradient(135deg, #f59e0b, #ef4444); color: white; }
-        .dock-icon.smp { background: linear-gradient(135deg, var(--accent-aqua), var(--accent-blue)); color: white; }
-        .dock-icon.whitelist { background: linear-gradient(135deg, var(--accent-green), #059669); color: white; }
-
-        .dock-label {
-            font-size: 0.6rem; color: var(--text-muted); font-weight: 500;
-            letter-spacing: 0.02em; transition: all 0.2s ease;
-            white-space: nowrap;
-        }
-
-        /* Dock magnification */
-        .dock-item.magnify-1 .dock-icon { transform: scale(1.25); }
-        .dock-item.magnify-2 .dock-icon { transform: scale(1.5); }
-        .dock-item.magnify-1 { margin: 0 2px; }
-        .dock-item.magnify-2 { margin: 0 4px; }
-
-        .dock-tooltip {
-            position: absolute; top: -36px; left: 50%; transform: translateX(-50%);
-            background: var(--bg-card); border: 1px solid var(--border-subtle);
-            color: var(--text-primary); padding: 0.3rem 0.7rem; border-radius: 8px;
-            font-size: 0.75rem; font-weight: 600; white-space: nowrap;
-            opacity: 0; pointer-events: none; transition: opacity 0.15s ease;
-        }
-        .dock-item:hover .dock-tooltip { opacity: 1; }
+        /* No dock in single server mode */
 
         /* ═══════════════════════════════════════════════════════
            STATUS BADGES
@@ -856,7 +795,8 @@
 <div class="login-overlay" id="loginOverlay">
     <div class="login-card">
         <div class="login-logo">
-            <img src="logo.png" alt="True Vanilla" onerror="this.style.display='none'">
+            <img src="icons/logo.png" alt="True Vanilla" onerror="this.style.display='none'">
+            <div class="login-logo-text">True Vanilla</div>
         </div>
         <p class="login-subtitle">Panneau d'Administration — Accès restreint</p>
 
@@ -1281,26 +1221,7 @@
 
 </div><!-- /app-container -->
 
-<!-- BOTTOM DOCK -->
-<div class="dock-wrapper" id="dockWrapper" style="display:none;">
-    <div class="dock" id="dock">
-        <div class="dock-item active" data-server="minijeu" onclick="switchServer('minijeu')">
-            <div class="dock-tooltip">Mini-jeu</div>
-            <div class="dock-icon minijeu"><i class="fas fa-gamepad"></i></div>
-            <span class="dock-label">Mini-jeu</span>
-        </div>
-        <div class="dock-item" data-server="smp" onclick="switchServer('smp')">
-            <div class="dock-tooltip">SMP</div>
-            <div class="dock-icon smp"><i class="fas fa-mountain-sun"></i></div>
-            <span class="dock-label">SMP</span>
-        </div>
-        <div class="dock-item" data-server="whitelist" onclick="switchServer('whitelist')">
-            <div class="dock-tooltip">Whitelist</div>
-            <div class="dock-icon whitelist"><i class="fas fa-list-check"></i></div>
-            <span class="dock-label">Whitelist</span>
-        </div>
-    </div>
-</div>
+<!-- No dock in single server mode -->
 
 <!-- DISCORD PREVIEW OVERLAY -->
 <div class="preview-overlay" id="previewOverlay">
@@ -1360,15 +1281,11 @@ const CONFIG = {
         vip: 'https://discord.com/api/webhooks/1436719755578052668/BmHB4Dc40iM9eD9mFc3o7dJZ12pGo9rSH-LEweteHLZII84ncSjh9Sy2M4TNsQv01627',
         general: 'https://discord.com/api/webhooks/1431983410179604642/89zUIzYTwJJJx9qm1sGbra0uI7uOFcNOqAaK0XW1ivChbY8ntRPr0woEK3JA8sY1shyw'
     },
-    SERVERS: {
-        minijeu: { name: 'Mini-jeu', ip: 'play.true-vanilla.fr' },
-        smp: { name: 'SMP', ip: 'play.true-vanilla.fr' },
-        whitelist: { name: 'Whitelist', ip: 'play.true-vanilla.fr' }
-    }
+    SERVER_NAME: 'SMP',
+    SERVER_IP: 'play.true-vanilla.fr'
 };
 
 let currentUser = null;
-let currentServer = 'smp';
 let selectedPlayer = null;
 let uploadedImages = [];
 let selectedChannel = null;
@@ -1443,7 +1360,6 @@ async function handleOAuthCallback() {
 function showApp() {
     document.getElementById('loginOverlay').classList.add('hidden');
     document.getElementById('appContainer').classList.add('visible');
-    document.getElementById('dockWrapper').style.display = 'flex';
 
     // Set user info
     document.getElementById('sidebarUsername').textContent = currentUser.username;
@@ -1453,8 +1369,10 @@ function showApp() {
         document.getElementById('sidebarAvatar').src = currentUser.avatar;
     }
 
+    document.getElementById('currentServerName').textContent = CONFIG.SERVER_NAME;
+    document.getElementById('serverIP').textContent = CONFIG.SERVER_IP;
+
     startPolling();
-    initDock();
 }
 
 function logout() {
@@ -1462,7 +1380,6 @@ function logout() {
     currentUser = null;
     stopPolling();
     document.getElementById('appContainer').classList.remove('visible');
-    document.getElementById('dockWrapper').style.display = 'none';
     document.getElementById('loginOverlay').classList.remove('hidden');
     document.getElementById('loginError').classList.remove('show');
 }
@@ -1481,48 +1398,11 @@ function switchCmdTab(tab) {
 }
 
 // ═══════════════════════════════════════════════════════
-// SERVER SWITCHING (Dock)
-// ═══════════════════════════════════════════════════════
-function switchServer(server) {
-    currentServer = server;
-    document.querySelectorAll('.dock-item').forEach(el => el.classList.toggle('active', el.dataset.server === server));
-    document.getElementById('currentServerName').textContent = CONFIG.SERVERS[server].name;
-    document.getElementById('serverIP').textContent = CONFIG.SERVERS[server].ip;
-    // Refresh data for new server
-    fetchStats();
-    fetchConsole();
-    fetchPlayers();
-}
-
-// ═══════════════════════════════════════════════════════
-// DOCK MAGNIFICATION
-// ═══════════════════════════════════════════════════════
-function initDock() {
-    const dock = document.getElementById('dock');
-    const items = dock.querySelectorAll('.dock-item');
-
-    dock.addEventListener('mousemove', (e) => {
-        items.forEach(item => {
-            const rect = item.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const dist = Math.abs(e.clientX - centerX);
-            item.classList.remove('magnify-1', 'magnify-2');
-            if (dist < 30) item.classList.add('magnify-2');
-            else if (dist < 70) item.classList.add('magnify-1');
-        });
-    });
-
-    dock.addEventListener('mouseleave', () => {
-        items.forEach(item => item.classList.remove('magnify-1', 'magnify-2'));
-    });
-}
-
-// ═══════════════════════════════════════════════════════
 // API CALLS (communicate with the Paper plugin)
 // ═══════════════════════════════════════════════════════
 async function apiCall(endpoint) {
     try {
-        const res = await fetch(`${CONFIG.API_BASE}/${currentServer}/${endpoint}`, {
+        const res = await fetch(`${CONFIG.API_BASE}/${endpoint}`, {
             headers: { 'Authorization': currentUser ? currentUser.id : '' }
         });
         if (!res.ok) throw new Error('API error');
@@ -1534,7 +1414,7 @@ async function apiCall(endpoint) {
 
 async function apiPost(endpoint, body) {
     try {
-        const res = await fetch(`${CONFIG.API_BASE}/${currentServer}/${endpoint}`, {
+        const res = await fetch(`${CONFIG.API_BASE}/${endpoint}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
