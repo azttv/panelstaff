@@ -1,50 +1,68 @@
 // ═══════════════════════════════════════════════════════
 // Cloudflare Worker — TrueVanillaAdmin (Single Server)
 // ═══════════════════════════════════════════════════════
-// Deploy: Workers & Pages → Create Worker → paste this code
-// Then: Triggers → Custom Domains → api-admin.true-vanilla.fr
+
+// ─── CONFIGURATION ───────────────────────────────────
+const ORIGIN = "http://145.239.149.173:8275"; // ← Replace with your MC server IP
+const ALLOWED_ORIGIN = "https://staff.true-vanilla.fr";
+// ─────────────────────────────────────────────────────
+
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  "Access-Control-Max-Age": "86400",
+};
 
 export default {
   async fetch(request) {
-    // ─── CONFIGURATION ───
-    const ORIGIN = "http://145.239.149.173:8275"; // ← Replace with your MC server IP
-    const ALLOWED_ORIGIN = "https://staff.true-vanilla.fr";
-
-    // Handle CORS preflight
+    // ALWAYS handle OPTIONS preflight — no matter what
     if (request.method === "OPTIONS") {
-      return new Response(null, {
-        headers: {
-          "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
-          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type, Authorization",
-          "Access-Control-Max-Age": "86400",
-        },
-      });
+      return new Response(null, { status: 204, headers: CORS_HEADERS });
     }
 
     const url = new URL(request.url);
-
-    // Forward request to MC server
     const targetUrl = ORIGIN + url.pathname + url.search;
 
     try {
       const response = await fetch(targetUrl, {
         method: request.method,
-        headers: request.headers,
-        body: request.method !== "GET" ? request.body : null,
+        headers: {
+          "Content-Type":
+            request.headers.get("Content-Type") || "application/json",
+          Authorization: request.headers.get("Authorization") || "",
+        },
+        body:
+          request.method !== "GET" && request.method !== "HEAD"
+            ? request.body
+            : null,
       });
 
-      const newResponse = new Response(response.body, response);
-      newResponse.headers.set("Access-Control-Allow-Origin", ALLOWED_ORIGIN);
-      return newResponse;
-    } catch (err) {
-      return new Response(JSON.stringify({ error: "Server unreachable" }), {
-        status: 502,
+      // Clone and add CORS headers
+      const body = await response.text();
+      return new Response(body, {
+        status: response.status,
         headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
+          "Content-Type":
+            response.headers.get("Content-Type") || "application/json",
+          ...CORS_HEADERS,
         },
       });
+    } catch (err) {
+      // Server unreachable — still return valid CORS response
+      return new Response(
+        JSON.stringify({
+          error: "Serveur Minecraft injoignable",
+          detail: err.message,
+        }),
+        {
+          status: 502,
+          headers: {
+            "Content-Type": "application/json",
+            ...CORS_HEADERS,
+          },
+        },
+      );
     }
   },
 };
