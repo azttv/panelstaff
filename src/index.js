@@ -7,7 +7,7 @@
 export default {
   async fetch(request) {
     // ─── CONFIGURATION ───
-    const ORIGIN = "http://play.true-vanilla.fr:8275"; // ← Replace with your MC server IP
+    const ORIGIN = "http://145.239.149.173:8275"; // ← Replace with your MC server IP
     const ALLOWED_ORIGIN = "https://staff.true-vanilla.fr";
 
     // Handle CORS preflight
