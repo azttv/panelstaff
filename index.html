@@ -890,7 +890,7 @@
                         <div class="console-body" id="consoleBody">
                             <div class="console-line"><span class="time">[--:--:--]</span> <span class="info">[INFO]</span> En attente de connexion au serveur...</div>
                         </div>
-                        <div class="console-input-bar">
+                        <div class="console-input-bar" id="consoleInputBar">
                             <input type="text" class="console-input" id="consoleInput" placeholder="Entrer une commande..." onkeydown="if(event.key==='Enter')sendCommand()">
                             <button class="console-send" onclick="sendCommand()"><i class="fas fa-paper-plane"></i> Envoyer</button>
                         </div>
@@ -1004,10 +1004,11 @@
                     </div>
 
                     <div class="cmd-tabs">
-                        <button class="cmd-tab-btn active" onclick="switchCmdTab('sanctions')"><i class="fas fa-gavel"></i> Sanctions</button>
-                        <button class="cmd-tab-btn" onclick="switchCmdTab('permissions')"><i class="fas fa-key"></i> Permissions/Grades</button>
-                        <button class="cmd-tab-btn" onclick="switchCmdTab('remboursements')"><i class="fas fa-undo-alt"></i> Remboursements</button>
-                        <button class="cmd-tab-btn" onclick="switchCmdTab('grief')"><i class="fas fa-search-location"></i> Grief</button>
+                        <button class="cmd-tab-btn active" data-cmd="sanctions" onclick="switchCmdTab('sanctions')"><i class="fas fa-gavel"></i> Sanctions</button>
+                        <button class="cmd-tab-btn" data-cmd="permissions" onclick="switchCmdTab('permissions')"><i class="fas fa-key"></i> Permissions/Grades</button>
+                        <button class="cmd-tab-btn" data-cmd="remboursements" onclick="switchCmdTab('remboursements')"><i class="fas fa-undo-alt"></i> Remboursements</button>
+                        <button class="cmd-tab-btn" data-cmd="grief" onclick="switchCmdTab('grief')"><i class="fas fa-search-location"></i> Grief</button>
+                        <button class="cmd-tab-btn" data-cmd="staffchat" onclick="switchCmdTab('staffchat')"><i class="fas fa-headset"></i> StaffChat</button>
                     </div>
 
                     <!-- SANCTIONS (AdvancedBan) -->
@@ -1212,6 +1213,70 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- STAFFCHAT (CleanStaffChat) -->
+                    <div class="cmd-panel" id="cmd-staffchat">
+                        <div class="cmd-group">
+                            <div class="cmd-group-title"><i class="fas fa-comments"></i> StaffChat</div>
+                            <div class="cmd-item">
+                                <div class="cmd-syntax">/sc &lt;message&gt;</div>
+                                <div class="cmd-desc">Envoie un message dans le StaffChat visible uniquement par les membres du staff. Si utilisé sans message, active/désactive le mode StaffChat — tous vos messages seront envoyés dans le chat staff jusqu'à ce que vous le désactiviez.</div>
+                            </div>
+                            <div class="cmd-item">
+                                <div class="cmd-syntax">/sctoggle</div>
+                                <div class="cmd-desc">Rend le StaffChat invisible pour vous personnellement. Vous ne verrez plus les messages du staff chat. Réutilisez la commande pour le réactiver.</div>
+                            </div>
+                            <div class="cmd-item">
+                                <div class="cmd-syntax">/scmute</div>
+                                <div class="cmd-desc">Désactive le StaffChat globalement pour tout le serveur. Plus personne ne pourra envoyer ou recevoir de messages dans le staff chat. Réutilisez la commande pour le réactiver.</div>
+                            </div>
+                            <div class="cmd-item">
+                                <div class="cmd-syntax">/scafk</div>
+                                <div class="cmd-desc">Active/désactive votre statut AFK dans le StaffChat. Les autres membres du staff verront que vous êtes AFK.</div>
+                            </div>
+                        </div>
+                        <div class="cmd-group">
+                            <div class="cmd-group-title"><i class="fas fa-user-shield"></i> AdminChat</div>
+                            <div class="cmd-item">
+                                <div class="cmd-syntax">/ac &lt;message&gt;</div>
+                                <div class="cmd-desc">Envoie un message dans l'AdminChat, un canal privé réservé aux administrateurs. Sans message, active/désactive le mode AdminChat — tous vos messages iront dans le chat admin.</div>
+                            </div>
+                            <div class="cmd-item">
+                                <div class="cmd-syntax">/actoggle</div>
+                                <div class="cmd-desc">Rend l'AdminChat invisible pour vous personnellement. Réutilisez la commande pour le réactiver.</div>
+                            </div>
+                            <div class="cmd-item">
+                                <div class="cmd-syntax">/acmute</div>
+                                <div class="cmd-desc">Désactive l'AdminChat globalement. Plus personne ne pourra envoyer ou recevoir de messages dans le chat admin.</div>
+                            </div>
+                        </div>
+                        <div class="cmd-group">
+                            <div class="cmd-group-title"><i class="fas fa-gem"></i> DonorChat</div>
+                            <div class="cmd-item">
+                                <div class="cmd-syntax">/dc &lt;message&gt;</div>
+                                <div class="cmd-desc">Envoie un message dans le DonorChat, un canal réservé aux donateurs/VIP. Sans message, active/désactive le mode DonorChat.</div>
+                            </div>
+                            <div class="cmd-item">
+                                <div class="cmd-syntax">/dctoggle</div>
+                                <div class="cmd-desc">Rend le DonorChat invisible pour vous personnellement.</div>
+                            </div>
+                        </div>
+                        <div class="cmd-group">
+                            <div class="cmd-group-title"><i class="fas fa-cog"></i> Administration</div>
+                            <div class="cmd-item">
+                                <div class="cmd-syntax">/mutechat &lt;serveur&gt;</div>
+                                <div class="cmd-desc">Mute le chat globalement ou sur un serveur spécifique. Plus aucun joueur ne pourra parler dans le chat public. Utile pendant les annonces importantes ou les maintenances.</div>
+                            </div>
+                            <div class="cmd-item">
+                                <div class="cmd-syntax">/stafflist</div>
+                                <div class="cmd-desc">Affiche la liste des membres du staff actuellement connectés sur le réseau (tous serveurs confondus).</div>
+                            </div>
+                            <div class="cmd-item">
+                                <div class="cmd-syntax">/screload</div>
+                                <div class="cmd-desc">Recharge la configuration du plugin CleanStaffChat. Applique les modifications faites dans config.yml et aliases.yml sans redémarrer le serveur.</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1273,7 +1338,26 @@
 // CONFIGURATION
 // ═══════════════════════════════════════════════════════
 const CONFIG = {
-    ALLOWED_IDS: ['217271015892451328', '303167270891290625'],
+    // ─── USER PERMISSIONS ─────────────────────────────────
+    // Each Discord ID maps to allowed tabs + console access.
+    // Available tabs: 'dashboard', 'joueurs', 'annonce', 'commandes'
+    // canUseConsole: true/false — allows typing commands in the console
+    USERS: {
+        '217271015892451328': {
+            tabs: ['dashboard', 'joueurs', 'annonce', 'commandes'],
+            canUseConsole: true   // Can type commands
+        },
+        '303167270891290625': {
+            tabs: ['dashboard', 'joueurs', 'annonce', 'commandes'],
+            canUseConsole: true   // Can type commands
+        },
+        // Example: moderator who can see console but NOT type commands
+        // '123456789012345678': {
+        //     tabs: ['dashboard', 'joueurs', 'commandes'],
+        //     canUseConsole: false  // Read-only console
+        // },
+    },
+    // ──────────────────────────────────────────────────────
     DISCORD_CLIENT_ID: '1372683898378522634',
     DISCORD_REDIRECT_URI: 'https://staff.true-vanilla.fr/',
     API_BASE: 'https://api-admin.true-vanilla.fr/api',
@@ -1334,7 +1418,7 @@ async function handleOAuthCallback() {
         // Clear the hash from URL
         history.replaceState(null, '', window.location.pathname);
 
-        if (!CONFIG.ALLOWED_IDS.includes(user.id)) {
+        if (!CONFIG.USERS[user.id]) {
             document.getElementById('loginError').classList.add('show');
             document.getElementById('loginErrorMsg').textContent = 'Accès refusé. Votre compte Discord n\'est pas autorisé.';
             return false;
@@ -1343,7 +1427,9 @@ async function handleOAuthCallback() {
         currentUser = {
             id: user.id,
             username: user.global_name || user.username,
-            avatar: user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=128` : null
+            avatar: user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=128` : null,
+            allowedTabs: CONFIG.USERS[user.id].tabs || [],
+            canUseConsole: CONFIG.USERS[user.id].canUseConsole === true
         };
 
         sessionStorage.setItem('tv_admin_user', JSON.stringify(currentUser));
@@ -1372,7 +1458,46 @@ function showApp() {
     document.getElementById('currentServerName').textContent = CONFIG.SERVER_NAME;
     document.getElementById('serverIP').textContent = CONFIG.SERVER_IP;
 
+    // Apply tab permissions — hide blocked tabs
+    applyTabPermissions();
+
     startPolling();
+}
+
+function applyTabPermissions() {
+    const allowed = currentUser.allowedTabs || [];
+    const allTabs = ['dashboard', 'joueurs', 'annonce', 'commandes'];
+    let firstAllowed = null;
+
+    allTabs.forEach(tab => {
+        const sidebarItem = document.querySelector(`.sidebar-item[data-tab="${tab}"]`);
+        const tabPanel = document.getElementById('tab-' + tab);
+
+        if (allowed.includes(tab)) {
+            // Show tab
+            if (sidebarItem) sidebarItem.style.display = '';
+            if (!firstAllowed) firstAllowed = tab;
+        } else {
+            // Hide tab
+            if (sidebarItem) sidebarItem.style.display = 'none';
+            if (tabPanel) tabPanel.classList.remove('active');
+        }
+    });
+
+    // Make sure at least one tab is active
+    if (firstAllowed) {
+        const anyActive = document.querySelector('.tab-panel.active');
+        const activeTab = anyActive ? anyActive.id.replace('tab-', '') : null;
+        if (!activeTab || !allowed.includes(activeTab)) {
+            switchTab(firstAllowed);
+        }
+    }
+
+    // Console command input — show/hide based on canUseConsole
+    const consoleBar = document.getElementById('consoleInputBar');
+    if (consoleBar) {
+        consoleBar.style.display = currentUser.canUseConsole ? '' : 'none';
+    }
 }
 
 function logout() {
@@ -1388,12 +1513,14 @@ function logout() {
 // TAB SWITCHING
 // ═══════════════════════════════════════════════════════
 function switchTab(tab) {
+    // Check permission
+    if (currentUser && currentUser.allowedTabs && !currentUser.allowedTabs.includes(tab)) return;
     document.querySelectorAll('.sidebar-item').forEach(el => el.classList.toggle('active', el.dataset.tab === tab));
     document.querySelectorAll('.tab-panel').forEach(el => el.classList.toggle('active', el.id === 'tab-' + tab));
 }
 
 function switchCmdTab(tab) {
-    document.querySelectorAll('.cmd-tab-btn').forEach(el => el.classList.toggle('active', el.textContent.toLowerCase().includes(tab.substring(0, 4))));
+    document.querySelectorAll('.cmd-tab-btn').forEach(el => el.classList.toggle('active', el.dataset.cmd === tab));
     document.querySelectorAll('.cmd-panel').forEach(el => el.classList.toggle('active', el.id === 'cmd-' + tab));
 }
 
@@ -1518,6 +1645,7 @@ function escapeHtml(text) {
 }
 
 async function sendCommand() {
+    if (!currentUser || !currentUser.canUseConsole) return;
     const input = document.getElementById('consoleInput');
     const cmd = input.value.trim();
     if (!cmd) return;
@@ -1832,8 +1960,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     const stored = sessionStorage.getItem('tv_admin_user');
     if (stored) {
         currentUser = JSON.parse(stored);
-        showApp();
-        return;
+        // Re-validate permissions (in case CONFIG changed)
+        if (CONFIG.USERS[currentUser.id]) {
+            currentUser.allowedTabs = CONFIG.USERS[currentUser.id].tabs || [];
+            currentUser.canUseConsole = CONFIG.USERS[currentUser.id].canUseConsole === true;
+            showApp();
+            return;
+        } else {
+            sessionStorage.removeItem('tv_admin_user');
+        }
     }
 
     // Check for OAuth callback
