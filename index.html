@@ -574,6 +574,15 @@
         .image-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.75rem; margin-top: 1rem; }
         .image-preview-item { position: relative; aspect-ratio: 16/9; border-radius: 8px; overflow: hidden; background: rgba(0,0,0,0.3); }
         .image-preview-item img { width: 100%; height: 100%; object-fit: cover; }
+        .image-preview-item video { width: 100%; height: 100%; object-fit: cover; background: #000; }
+        .image-preview-item .media-type-badge {
+            position: absolute; top: 6px; left: 6px;
+            background: rgba(0, 0, 0, 0.7); color: #fff;
+            font-size: 0.7rem; padding: 3px 7px; border-radius: 6px;
+            display: flex; align-items: center; gap: 4px;
+            backdrop-filter: blur(4px); pointer-events: none;
+        }
+        .image-preview-item .media-type-badge i { font-size: 0.7rem; }
         .image-remove-btn {
             position: absolute; top: 6px; right: 6px; width: 26px; height: 26px;
             background: rgba(239, 68, 68, 0.9); border: none; border-radius: 6px;
@@ -657,6 +666,7 @@
         .discord-embed-images { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin-top: 0.75rem; }
         .discord-embed-images.single { grid-template-columns: 1fr; }
         .discord-embed-images img { width: 100%; border-radius: 4px; max-height: 200px; object-fit: cover; }
+        .discord-embed-images video { width: 100%; border-radius: 4px; max-height: 200px; object-fit: cover; background: #000; }
 
         .channel-selection { padding: 1.5rem; border-top: 1px solid var(--border-subtle); }
         .channel-label { font-size: 0.9rem; font-weight: 500; color: var(--text-secondary); margin-bottom: 1rem; text-align: center; }
@@ -972,12 +982,12 @@
                             <p class="markdown-hint">Markdown : <code>**gras**</code> <code>*italique*</code> <code>__souligné__</code> <code>~~barré~~</code></p>
                         </div>
                         <div class="form-section">
-                            <div class="form-section-title"><i class="fas fa-images"></i> Images (4 max)</div>
+                            <div class="form-section-title"><i class="fas fa-photo-film"></i> Médias (4 max)</div>
                             <div class="image-upload-zone" id="uploadZone">
-                                <input type="file" id="imageInput" accept="image/*" multiple>
+                                <input type="file" id="imageInput" accept="image/*,video/*" multiple>
                                 <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
                                 <p class="upload-text">Glissez, cliquez ou collez</p>
-                                <p class="upload-hint">PNG, JPG, GIF (50MB max)</p>
+                                <p class="upload-hint">Images (PNG, JPG, GIF) ou vidéos (MP4, MOV, WEBM...) — 50MB max</p>
                             </div>
                             <div class="image-preview-grid" id="imagePreviewGrid"></div>
                         </div>
@@ -1849,24 +1859,37 @@ document.getElementById('uploadZone')?.addEventListener('drop', e => { e.prevent
 document.getElementById('imageInput')?.addEventListener('change', e => handleFiles(e.target.files));
 document.addEventListener('paste', e => {
     if (document.getElementById('tab-annonce').classList.contains('active')) {
-        for (let i of e.clipboardData.items) if (i.type.startsWith('image/')) handleFiles([i.getAsFile()]);
+        for (let i of e.clipboardData.items) if (i.type.startsWith('image/') || i.type.startsWith('video/')) handleFiles([i.getAsFile()]);
     }
 });
 
 function handleFiles(files) {
     for (let f of files) {
         if (uploadedImages.length >= 4) break;
-        if (f.size > 50 * 1024 * 1024 || !f.type.startsWith('image/')) continue;
+        const isImage = f.type.startsWith('image/');
+        const isVideo = f.type.startsWith('video/');
+        if (f.size > 50 * 1024 * 1024 || (!isImage && !isVideo)) continue;
         const r = new FileReader();
-        r.onload = e => { uploadedImages.push({ data: e.target.result, name: f.name }); renderPreviews(); };
+        r.onload = e => {
+            uploadedImages.push({
+                data: e.target.result,
+                name: f.name,
+                type: f.type,
+                kind: isVideo ? 'video' : 'image'
+            });
+            renderPreviews();
+        };
         r.readAsDataURL(f);
     }
 }
 
 function renderPreviews() {
-    document.getElementById('imagePreviewGrid').innerHTML = uploadedImages.map((img, i) =>
-        `<div class="image-preview-item"><img src="${img.data}"><button class="image-remove-btn" onclick="uploadedImages.splice(${i},1);renderPreviews()"><i class="fas fa-times"></i></button></div>`
-    ).join('');
+    document.getElementById('imagePreviewGrid').innerHTML = uploadedImages.map((m, i) => {
+        const media = m.kind === 'video'
+            ? `<video src="${m.data}" muted playsinline preload="metadata"></video><span class="media-type-badge"><i class="fas fa-video"></i> Vidéo</span>`
+            : `<img src="${m.data}">`;
+        return `<div class="image-preview-item">${media}<button class="image-remove-btn" onclick="uploadedImages.splice(${i},1);renderPreviews()"><i class="fas fa-times"></i></button></div>`;
+    }).join('');
 }
 
 document.getElementById('btnReset').onclick = () => {
@@ -1885,7 +1908,11 @@ document.getElementById('btnConfirm').onclick = () => {
     document.getElementById('previewTime').textContent = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
     const sig = document.getElementById('signatureCheckbox').checked ? currentUser.username : "l'Équipe True Vanilla";
     document.getElementById('previewMessageText').innerHTML = `<span class="mention">@everyone</span>\n<span class="heading"># ${escapeHtml(title)}</span>\n\n${escapeHtml(desc)}\n\n<span class="signature">*- ${escapeHtml(sig)}*</span>`;
-    document.getElementById('previewImages').innerHTML = uploadedImages.length ? uploadedImages.map(i => `<img src="${i.data}">`).join('') : '';
+    document.getElementById('previewImages').innerHTML = uploadedImages.length
+        ? uploadedImages.map(m => m.kind === 'video'
+            ? `<video src="${m.data}" controls muted playsinline preload="metadata"></video>`
+            : `<img src="${m.data}">`).join('')
+        : '';
     document.getElementById('previewImages').className = 'discord-embed-images' + (uploadedImages.length === 1 ? ' single' : '');
 
     selectedChannel = null;
@@ -1922,8 +1949,10 @@ async function sendAnnouncement() {
             const fd = new FormData();
             fd.append('payload_json', JSON.stringify({ content }));
             for (let i = 0; i < uploadedImages.length; i++) {
-                const b = await fetch(uploadedImages[i].data).then(r => r.blob());
-                fd.append(`file${i}`, b, uploadedImages[i].name || `img${i}.png`);
+                const m = uploadedImages[i];
+                const b = await fetch(m.data).then(r => r.blob());
+                const ext = m.kind === 'video' ? 'mp4' : 'png';
+                fd.append(`file${i}`, b, m.name || `media${i}.${ext}`);
             }
             await fetch(webhookUrl, { method: 'POST', body: fd });
         } else {
